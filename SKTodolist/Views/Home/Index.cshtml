@@ -1,0 +1,64 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Todo Tasks Listing</h1>
+</div>
+
+<div class="alert alert-info" data-bind="visible: !initialized()">
+    Initializing...
+</div>
+<div data-bind="visible: initialized()">
+    <div class="alert alert-info" data-bind="visible: items().length < 1">
+        No todo list items registered
+    </div>
+    <div class="input-group">
+        <span class="input-group-addon">Task</span>
+        <input type="text" class="form-control"
+               placeholder="Add New Task" data-bind="value: addedTaskValue, valueUpdate: 'afterKeydown'" />
+        <span class="input-group-btn col-sm-1">
+            <button class="btn btn-default" type="button" data-bind="click: add">Go!</button>
+        </span>
+    </div>
+
+    <div data-bind="visible: items().length > 0">
+        <br />
+        <div class="list-group-item-heading">Tasks:</div>
+        <ul data-bind="foreach: items" class="list-group">
+            <li data-bind="css: (IsDone() ? 'list-group-item-success' : 'list-group-item-text'), click: $parent.toggle" class="list-group-item">
+                <div data-bind="visible: !IsEditing()">
+                    <span data-bind="text: Title"></span>
+                    <div style="float: right;">
+                        <a href=" javascript void(0);" class="glyphicon-edit" data-bind="click: $parent.beginEdit">Edit</a>
+                        &nbsp;
+                        <a href=" javascript void(0);" class="glyphicon-remove" data-bind="click: $parent.remove">Delete</a>
+                    </div>
+                </div>
+                <div data-bind="visible: IsEditing">
+                    <input type="text" class="form-control" style="float: left;" data-bind="value: EditingValue, valueUpdate: 'afterKeydown', attr: { placeholder: Title }" />
+                    <input class="btn btn-default" style="float: right; margin-left: 10px;" type="button" data-bind="click: $parent.commitEdit" value="Done" />
+                    <input class="btn btn-default" style="float: right;" type="button" data-bind="click: $parent.rollbackEdit" value="Cancel">
+                    <div class="clearfix"></div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<link href="~/Content/toastr.css" rel="stylesheet" />
+
+@section Scripts {
+    <script src="~/Scripts/toastr.js"></script>
+
+    <script src="~/SignalR/Hubs"></script>
+
+    <script type="text/javascript">
+        var ALLOW_SIGNALR = true;
+        if (ALLOW_SIGNALR) {
+            $.connection.hub.url = "http://localhost:8678/SignalR";
+        }
+    </script>
+
+    <script src="http://knockoutjs.com/downloads/knockout-3.1.0.js"></script>
+<script src="~/Scripts/App/todo-list-viewmodel.js"></script>
+}
